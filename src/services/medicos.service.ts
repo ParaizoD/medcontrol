@@ -3,9 +3,15 @@ import { env } from '@/lib/env';
 import { mockMedicos } from './mocks/data';
 import type { Medico, MedicoInput, PaginatedResponse, PaginationParams } from '@/types';
 
+interface MedicoDetalhado extends Medico {
+  stats?: {
+    total_procedimentos: number;
+    ultima_atividade: string | null;
+  };
+}
+
 export const medicosService = {
-  list: async (params?: PaginationParams): Promise<PaginatedResponse<Medico>> => {
-    // TODO(api): Integrar com endpoint GET /medicos
+  list: async (params?: PaginationParams & { search?: string }): Promise<PaginatedResponse<Medico>> => {
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 400));
       return {
@@ -19,12 +25,27 @@ export const medicosService = {
       };
     }
 
-    const { data } = await http.get<PaginatedResponse<Medico>>('/medicos', { params });
-    return data;
+    // Converter page/limit para skip/limit
+    const skip = params?.page ? (params.page - 1) * (params.limit || 20) : 0;
+    const limit = params?.limit || 100;
+    const search = params?.search;
+
+    const { data } = await http.get<Medico[]>('/medicos', { 
+      params: { skip, limit, search } 
+    });
+    
+    return {
+      data,
+      meta: {
+        total: data.length,
+        page: params?.page || 1,
+        limit: params?.limit || 20,
+        totalPages: Math.ceil(data.length / (params?.limit || 20)),
+      },
+    };
   },
 
-  getById: async (id: string): Promise<Medico> => {
-    // TODO(api): Integrar com endpoint GET /medicos/:id
+  getById: async (id: string): Promise<MedicoDetalhado> => {
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 300));
       const medico = mockMedicos.find((m) => m.id === id);
@@ -32,12 +53,26 @@ export const medicosService = {
       return medico;
     }
 
-    const { data } = await http.get<Medico>(`/medicos/${id}`);
+    const { data } = await http.get<MedicoDetalhado>(`/medicos/${id}`);
+    return data;
+  },
+
+  getProcedimentos: async (id: string, params?: { skip?: number; limit?: number }) => {
+    if (env.USE_MOCKS) {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return {
+        medico: { id, nome: 'Dr. Mock' },
+        procedimentos: [],
+        total: 0
+      };
+    }
+
+    const { data } = await http.get(`/medicos/${id}/procedimentos`, { params });
     return data;
   },
 
   create: async (payload: MedicoInput): Promise<Medico> => {
-    // TODO(api): Integrar com endpoint POST /medicos
+    // TODO(api): Endpoint POST /medicos ainda não implementado
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 600));
       return {
@@ -53,7 +88,7 @@ export const medicosService = {
   },
 
   update: async (id: string, payload: Partial<MedicoInput>): Promise<Medico> => {
-    // TODO(api): Integrar com endpoint PATCH /medicos/:id
+    // TODO(api): Endpoint PUT /medicos/:id ainda não implementado
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 600));
       const medico = mockMedicos.find((m) => m.id === id);
@@ -70,7 +105,7 @@ export const medicosService = {
   },
 
   delete: async (id: string): Promise<void> => {
-    // TODO(api): Integrar com endpoint DELETE /medicos/:id
+    // TODO(api): Endpoint DELETE /medicos/:id ainda não implementado
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 400));
       return;

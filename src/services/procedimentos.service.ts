@@ -14,11 +14,44 @@ import type {
   PaginationParams,
 } from '@/types';
 
+interface ProcedimentoAPI {
+  id: string;
+  data: string;
+  tipo: {
+    id: string;
+    nome: string;
+    valor_referencia: number | null;
+  };
+  medico: {
+    id: string;
+    nome: string;
+    crm: string | null;
+  };
+  paciente: {
+    id: string;
+    nome: string;
+  };
+  valor: number | null;
+  observacoes: string | null;
+}
+
+interface ProcedimentosResponse {
+  procedimentos: ProcedimentoAPI[];
+  total: number;
+  skip: number;
+  limit: number;
+}
+
 export const procedimentosService = {
   list: async (
-    params?: PaginationParams
+    params?: PaginationParams & { 
+      dataInicio?: string;
+      dataFim?: string;
+      medicoId?: string;
+      pacienteId?: string;
+      tipoId?: string;
+    }
   ): Promise<PaginatedResponse<ProcedimentoView>> => {
-    // TODO(api): Integrar com endpoint GET /procedimentos?expand=tipo,medico,paciente
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -41,13 +74,71 @@ export const procedimentosService = {
       };
     }
 
-    const { data } = await http.get<PaginatedResponse<ProcedimentoView>>(
-      '/procedimentos',
-      {
-        params: { ...params, expand: 'tipo,medico,paciente' },
+    // Converter page/limit para skip/limit
+    const skip = params?.page ? (params.page - 1) * (params.limit || 20) : 0;
+    const limit = params?.limit || 50;
+
+    const { data } = await http.get<ProcedimentosResponse>('/procedimentos', {
+      params: { 
+        skip, 
+        limit,
+        data_inicio: params?.dataInicio,
+        data_fim: params?.dataFim,
+        medico_id: params?.medicoId,
+        paciente_id: params?.pacienteId,
+        tipo_id: params?.tipoId,
       }
-    );
-    return data;
+    });
+
+    // Converter formato da API para formato do frontend
+    const procedimentos: ProcedimentoView[] = data.procedimentos.map(p => ({
+      id: p.id,
+      data: p.data,
+      tipoId: p.tipo.id,
+      medicoId: p.medico.id,
+      pacienteId: p.paciente.id,
+      valor: p.valor || 0,
+      observacoes: p.observacoes || undefined,
+      tipo: {
+        id: p.tipo.id,
+        nome: p.tipo.nome,
+        descricao: '',
+        valorReferencia: p.tipo.valor_referencia || 0,
+        ativo: true,
+        createdAt: '',
+        updatedAt: ''
+      },
+      medico: {
+        id: p.medico.id,
+        nome: p.medico.nome,
+        crm: p.medico.crm || undefined,
+        especialidade: '',
+        ativo: true,
+        createdAt: '',
+        updatedAt: ''
+      },
+      paciente: {
+        id: p.paciente.id,
+        nome: p.paciente.nome,
+        cpf: undefined,
+        dataNascimento: undefined,
+        createdAt: '',
+        updatedAt: ''
+      },
+      createdAt: '',
+      updatedAt: ''
+    }));
+
+    return {
+      data: procedimentos,
+      meta: {
+        total: data.total,
+        page: params?.page || 1,
+        limit: params?.limit || 20,
+        totalPages: Math.ceil(data.total / (params?.limit || 20)),
+      },
+    };
+  },
   },
 
   getById: async (id: string): Promise<ProcedimentoView> => {
