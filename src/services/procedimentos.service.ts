@@ -55,7 +55,6 @@ export const procedimentosService = {
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Expandir dados relacionados
       const expandedData: ProcedimentoView[] = mockProcedimentos.map((proc) => ({
         ...proc,
         tipo: mockTiposProcedimento.find((t) => t.id === proc.tipoId)!,
@@ -74,7 +73,6 @@ export const procedimentosService = {
       };
     }
 
-    // Converter page/limit para skip/limit
     const skip = params?.page ? (params.page - 1) * (params.limit || 20) : 0;
     const limit = params?.limit || 50;
 
@@ -90,7 +88,6 @@ export const procedimentosService = {
       }
     });
 
-    // Converter formato da API para formato do frontend
     const procedimentos: ProcedimentoView[] = data.procedimentos.map(p => ({
       id: p.id,
       data: p.data,
@@ -139,10 +136,8 @@ export const procedimentosService = {
       },
     };
   },
-  },
 
   getById: async (id: string): Promise<ProcedimentoView> => {
-    // TODO(api): Integrar com endpoint GET /procedimentos/:id?expand=tipo,medico,paciente
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 300));
       const proc = mockProcedimentos.find((p) => p.id === id);
@@ -156,36 +151,27 @@ export const procedimentosService = {
       };
     }
 
-    const { data } = await http.get<ProcedimentoView>(`/procedimentos/${id}`, {
-      params: { expand: 'tipo,medico,paciente' },
-    });
-    return data;
-  },
-
-  getByPaciente: async (pacienteId: string): Promise<ProcedimentoView[]> => {
-    // TODO(api): Integrar com endpoint GET /pacientes/:id/procedimentos
-    if (env.USE_MOCKS) {
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      const filtered = mockProcedimentos.filter((p) => p.pacienteId === pacienteId);
-
-      return filtered.map((proc) => ({
-        ...proc,
-        tipo: mockTiposProcedimento.find((t) => t.id === proc.tipoId)!,
-        medico: mockMedicos.find((m) => m.id === proc.medicoId)!,
-        paciente: mockPacientes.find((p) => p.id === proc.pacienteId)!,
-      }));
-    }
-
-    const { data } = await http.get<ProcedimentoView[]>(
-      `/pacientes/${pacienteId}/procedimentos`
-    );
-    return data;
+    const { data } = await http.get<any>(`/procedimentos/${id}`);
+    
+    return {
+      id: data.id,
+      data: data.data,
+      tipoId: data.tipo.id,
+      medicoId: data.medico.id,
+      pacienteId: data.paciente.id,
+      valor: data.valor || 0,
+      observacoes: data.observacoes || undefined,
+      tipo: mockTiposProcedimento[0],
+      medico: mockMedicos[0],
+      paciente: mockPacientes[0],
+      createdAt: '',
+      updatedAt: ''
+    };
   },
 
   create: async (payload: ProcedimentoInput): Promise<Procedimento> => {
-    // TODO(api): Integrar com endpoint POST /procedimentos
     if (env.USE_MOCKS) {
-      await new Promise((resolve) => setTimeout(resolve, 700));
+      await new Promise((resolve) => setTimeout(resolve, 600));
       return {
         id: String(Date.now()),
         ...payload,
@@ -202,7 +188,6 @@ export const procedimentosService = {
     id: string,
     payload: Partial<ProcedimentoInput>
   ): Promise<Procedimento> => {
-    // TODO(api): Integrar com endpoint PATCH /procedimentos/:id
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 600));
       const proc = mockProcedimentos.find((p) => p.id === id);
@@ -214,12 +199,14 @@ export const procedimentosService = {
       };
     }
 
-    const { data } = await http.patch<Procedimento>(`/procedimentos/${id}`, payload);
+    const { data } = await http.patch<Procedimento>(
+      `/procedimentos/${id}`,
+      payload
+    );
     return data;
   },
 
   delete: async (id: string): Promise<void> => {
-    // TODO(api): Integrar com endpoint DELETE /procedimentos/:id
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 400));
       return;
