@@ -19,6 +19,7 @@ export const mockMedicos: Medico[] = [
     telefone: '(11) 98765-4321',
     ativo: true,
     createdAt: '2024-01-15T10:00:00Z',
+    updatedAt: '2024-01-15T10:00:00Z',
   },
   {
     id: '2',
@@ -29,6 +30,7 @@ export const mockMedicos: Medico[] = [
     telefone: '(21) 99876-5432',
     ativo: true,
     createdAt: '2024-02-20T14:30:00Z',
+    updatedAt: '2024-02-20T14:30:00Z',
   },
   {
     id: '3',
@@ -39,6 +41,7 @@ export const mockMedicos: Medico[] = [
     telefone: '(31) 97654-3210',
     ativo: true,
     createdAt: '2024-03-10T09:15:00Z',
+    updatedAt: '2024-03-10T09:15:00Z',
   },
 ];
 
@@ -55,6 +58,7 @@ export const mockPacientes: Paciente[] = [
     email: 'maria.santos@email.com',
     endereco: 'Rua das Flores, 123 - São Paulo, SP',
     createdAt: '2024-01-10T08:00:00Z',
+    updatedAt: '2024-01-10T09:15:00Z',
   },
   {
     id: '2',
@@ -65,6 +69,7 @@ export const mockPacientes: Paciente[] = [
     email: 'joao.oliveira@email.com',
     endereco: 'Av. Principal, 456 - São Paulo, SP',
     createdAt: '2024-02-15T10:30:00Z',
+    updatedAt: '2024-03-10T09:15:00Z',
   },
   {
     id: '3',
@@ -74,6 +79,7 @@ export const mockPacientes: Paciente[] = [
     telefone: '(11) 99999-8888',
     email: 'ana.costa@email.com',
     createdAt: '2024-03-01T14:00:00Z',
+    updatedAt: '2024-03-10T09:15:00Z',
   },
 ];
 
@@ -168,6 +174,8 @@ export const mockDashboardStats: DashboardStats = {
   totalPacientes: 28,
   totalMedicos: 3,
   procedimentosMes: 12,
+  faturamentoMes: 12500.00,    
+  crescimentoMensal: 12.5,     
   procedimentosPorTipo: [
     { tipo: 'Consulta', quantidade: 18 },
     { tipo: 'Exame', quantidade: 12 },

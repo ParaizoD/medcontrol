@@ -38,13 +38,13 @@ export type MenuItem = {
 export type Medico = {
   id: string;
   nome: string;
-  crm: string;
-  especialidade: string;
-  email?: string;
+  crm?: string;  
+  especialidade?: string;
   telefone?: string;
+  email?: string;
   ativo: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type MedicoInput = Omit<Medico, 'id' | 'createdAt' | 'updatedAt'>;
@@ -114,8 +114,8 @@ export type DashboardStats = {
   totalPacientes: number;
   totalMedicos: number;
   procedimentosMes: number;
-  faturamentoMes: number;        
-  crescimentoMensal?: number;    
+  faturamentoMes: number;
+  crescimentoMensal?: number;
   procedimentosPorTipo: Array<{
     tipo: string;
     quantidade: number;
@@ -127,6 +127,28 @@ export type DashboardStats = {
   evolucaoMensal: Array<{
     mes: string;
     quantidade: number;
+  }>;
+  topMedicos?: Array<{
+    id: string;
+    nome: string;
+    total: number;
+  }>;
+  topProcedimentos?: Array<{
+    id: string;
+    nome: string;
+    total: number;
+  }>;
+  procedimentosPorMes?: Array<{
+    mes: string;
+    total: number;
+  }>;
+  ultimosProcedimentos?: Array<{
+    id: string;
+    data: string;
+    tipo: string;
+    medico: string;
+    paciente: string;
+    valor: number;
   }>;
 };
 
