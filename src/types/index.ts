@@ -114,6 +114,8 @@ export type DashboardStats = {
   totalPacientes: number;
   totalMedicos: number;
   procedimentosMes: number;
+  faturamentoMes: number;        
+  crescimentoMensal?: number;    
   procedimentosPorTipo: Array<{
     tipo: string;
     quantidade: number;

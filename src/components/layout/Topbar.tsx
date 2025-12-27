@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Sun, Moon, User, LogOut, Search } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui.store';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { Button } from '@/components/ui/button';
