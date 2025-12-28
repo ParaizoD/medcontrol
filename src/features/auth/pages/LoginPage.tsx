@@ -127,20 +127,13 @@ export default function LoginPage() {
           </form>
 
           <div className="text-center">
-            
+            <a
               href="/forgot-password"
               className="text-sm text-muted-foreground hover:text-primary underline"
             >
               Esqueci minha senha
             </a>
           </div>
-
-          {env.USE_MOCKS && (
-            <div className="mt-6 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg text-xs text-amber-900 dark:text-amber-100">
-              <strong>Modo de desenvolvimento:</strong> Use qualquer e-mail/senha para
-              acessar.
-            </div>
-          )}
         </div>
       </div>
     </div>
