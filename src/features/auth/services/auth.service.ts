@@ -16,7 +16,7 @@ export const authService = {
         user: {
           id: '1',
           name: 'Dr. Usuário Demo',
-          email: payload.username,
+          email: payload.email,
           roles: ['ADMIN', 'MEDICO'],
           avatar: undefined,
         },

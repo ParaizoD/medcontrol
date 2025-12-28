@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { env } from '@/lib/env';
 
 const schema = z.object({
-  username: z.string().min(1, 'Informe seu usuário ou e-mail'),
+  email: z.string().min(1, 'Informe seu e-mail'),
   password: z.string().min(1, 'Informe sua senha'),
 });
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
   const onSubmit = async (data: FormData) => {
     try {
       const response = await authService.login({
-        username: data.username,
+        email: data.email,
         password: data.password,
       });
 
@@ -94,15 +94,16 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Usuário ou E-mail</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
-                id="username"
+                id="email"
+                type="email"
                 placeholder="seu@email.com"
-                {...register('username')}
+                {...register('email')}
                 disabled={isSubmitting}
               />
-              {errors.username && (
-                <p className="text-xs text-destructive">{errors.username.message}</p>
+              {errors.email && (
+                <p className="text-xs text-destructive">{errors.email.message}</p>
               )}
             </div>
 
@@ -126,7 +127,7 @@ export default function LoginPage() {
           </form>
 
           <div className="text-center">
-            <a
+            
               href="/forgot-password"
               className="text-sm text-muted-foreground hover:text-primary underline"
             >
@@ -136,7 +137,7 @@ export default function LoginPage() {
 
           {env.USE_MOCKS && (
             <div className="mt-6 p-3 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg text-xs text-amber-900 dark:text-amber-100">
-              <strong>Modo de desenvolvimento:</strong> Use qualquer usuário/senha para
+              <strong>Modo de desenvolvimento:</strong> Use qualquer e-mail/senha para
               acessar.
             </div>
           )}
