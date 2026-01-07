@@ -4,13 +4,13 @@ import type { MenuItem } from '@/types';
 
 export const menuService = {
   getMyMenus: async (): Promise<MenuItem[]> => {
-    // TODO(api): Integrar com endpoint GET /me/menus
+    // Endpoint correto: GET /menus/my-menus
     if (env.USE_MOCKS) {
       await new Promise((resolve) => setTimeout(resolve, 300));
       return mockMenuItems;
     }
 
-    const { data } = await http.get<MenuItem[]>('/me/menus');
+    const { data } = await http.get<MenuItem[]>('/menus/my-menus');
     return data;
   },
 };
