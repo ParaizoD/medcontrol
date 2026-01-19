@@ -4,48 +4,44 @@ import type { ImportRow, ImportPreview, ImportResult } from '@/types/import.type
 
 export const importService = {
   /**
-   * Valida o CSV e retorna preview dos dados
+   * Valida o CSV localmente e retorna preview dos dados
+   * A validação é feita no frontend para dar feedback imediato ao usuário
    */
   validateCSV: async (rows: ImportRow[]): Promise<ImportPreview> => {
-    // TODO(api): Integrar com endpoint POST /import/validate
-    if (env.USE_MOCKS) {
-      await new Promise((resolve) => setTimeout(resolve, 800));
+    // Simula um pequeno delay para UX
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const validated = rows.map((row, index) => {
-        const errors: string[] = [];
+    const validated = rows.map((row, index) => {
+      const errors: string[] = [];
 
-        // Validações
-        if (!row.data) errors.push('Data é obrigatória');
-        if (!row.nomeProcedimento) errors.push('Nome do procedimento é obrigatório');
-        if (!row.nomeMedicos) errors.push('Nome do médico é obrigatório');
-        if (!row.nomePaciente) errors.push('Nome do paciente é obrigatório');
+      // Validações
+      if (!row.data) errors.push('Data é obrigatória');
+      if (!row.nomeProcedimento) errors.push('Nome do procedimento é obrigatório');
+      if (!row.nomeMedicos) errors.push('Nome do médico é obrigatório');
+      if (!row.nomePaciente) errors.push('Nome do paciente é obrigatório');
 
-        // Validar formato de data
-        if (row.data) {
-          const dateRegex = /^\d{4}-\d{2}-\d{2}$|^\d{2}\/\d{2}\/\d{4}$/;
-          if (!dateRegex.test(row.data)) {
-            errors.push('Data em formato inválido (use YYYY-MM-DD ou DD/MM/YYYY)');
-          }
+      // Validar formato de data
+      if (row.data) {
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$|^\d{2}\/\d{2}\/\d{4}$/;
+        if (!dateRegex.test(row.data)) {
+          errors.push('Data em formato inválido (use YYYY-MM-DD ou DD/MM/YYYY)');
         }
-
-        return {
-          ...row,
-          rowNumber: index + 1,
-          isValid: errors.length === 0,
-          errors,
-        };
-      });
+      }
 
       return {
-        totalRows: rows.length,
-        validRows: validated.filter((r) => r.isValid).length,
-        invalidRows: validated.filter((r) => !r.isValid).length,
-        rows: validated,
+        ...row,
+        rowNumber: index + 1,
+        isValid: errors.length === 0,
+        errors,
       };
-    }
+    });
 
-    const { data } = await http.post<ImportPreview>('/import/procedimentos', { rows });
-    return data;
+    return {
+      totalRows: rows.length,
+      validRows: validated.filter((r) => r.isValid).length,
+      invalidRows: validated.filter((r) => !r.isValid).length,
+      rows: validated,
+    };
   },
 
   /**
