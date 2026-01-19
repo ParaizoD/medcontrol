@@ -44,7 +44,7 @@ export default function ImportPage() {
 
   const handleValidate = async () => {
     if (rows.length === 0) {
-      toast.error('Nenhum dado para validar');
+      toast.error('Nenhum dado para importar');
       return;
     }
 
@@ -53,14 +53,14 @@ export default function ImportPage() {
       const previewData = await importService.validateCSV(rows);
       setPreview(previewData);
       setStep('preview');
-      
+
       if (previewData.invalidRows > 0) {
         toast.warning(`${previewData.invalidRows} registros com erros`);
       } else {
-        toast.success('Todos os registros estão válidos!');
+        toast.success('Dados processados com sucesso!');
       }
     } catch (error) {
-      toast.error('Erro ao validar dados');
+      toast.error('Erro ao importar dados');
     } finally {
       setLoading(false);
     }
@@ -175,7 +175,7 @@ export default function ImportPage() {
             {rows.length > 0 && (
               <div className="flex gap-2">
                 <Button onClick={handleValidate} disabled={loading}>
-                  {loading ? 'Validando...' : 'Validar Dados'}
+                  {loading ? 'Importando...' : 'Importar'}
                 </Button>
                 <Button variant="outline" onClick={handleReset}>
                   Cancelar

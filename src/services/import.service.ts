@@ -44,7 +44,7 @@ export const importService = {
       };
     }
 
-    const { data } = await http.post<ImportPreview>('/import/validate', { rows });
+    const { data } = await http.post<ImportPreview>('/import/procedimentos', { rows });
     return data;
   },
 
